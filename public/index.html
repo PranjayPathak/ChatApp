@@ -20,16 +20,22 @@
  
     <button id = "sendLocation">send Location</button>
      
-    <!-- Template -->
+    <!-- Template (Mustache)-->
      <script id = "messageTemplate" type="text/html">
       <div>
-          <p>this is a message</p>
+          <p>{{message}} -at {{createdAt}}</p>
       </div>
     </script>   
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.6.0/qs.min.js"></script>
+    <script id = "locationTemplate" type="text/html">
+        <div>
+            <a href="{{url}}" target="_blank">my current location -at {{createdAt}}</a>
+        </div>
+    </script>   
+      
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/qs/6.6.0/qs.min.js"></script>
     <script src = "/socket.io/socket.io.js" ></script>  
     <script src = "./js/chat.js"> </script>
 </body>

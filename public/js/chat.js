@@ -9,14 +9,36 @@ const $locationButton = document.querySelector("#sendLocation");
 const $messages =  document.querySelector("#messages")
 
 // Templates
+const messageTemplate = document.querySelector("#messageTemplate").innerHTML; //inner HTML of the tempate
+const locationTemplate = document.querySelector("#locationTemplate").innerHTML; //inner HTML of the location tempate
+
+
 socket.on("newMessage",(message)=>{
-    console.log(message);
+    // rendering html template for the message   
+    const html = Mustache.render(messageTemplate,{
+        message: message.text,
+       createdAt: moment(message.createdAt).format('h:m a')
+    });
+   
+    //inserting Mustache template
+    $messages.insertAdjacentHTML("beforeend",html)
 });
 
+socket.on("locationMessage",(location)=>{
+    // rendering html template for the message   
+    const html = Mustache.render(locationTemplate,{
+       url: location.url,
+       createdAt: moment(location.createdAt).format('h:m a')
+    });
+   
+    //inserting Mustache template
+    $messages.insertAdjacentHTML("beforeend",html)
+});
+
+//when form is submitted
 document.getElementById("messageForm").addEventListener("submit",(event)=>{
     event.preventDefault();
     $messageFormButton.setAttribute('disabled','disabled');
-    
 
     const message = event.target.elements.message.value;
     socket.emit("sendMessage",message,(res,err)=>{
@@ -30,6 +52,7 @@ document.getElementById("messageForm").addEventListener("submit",(event)=>{
     });
 });
 
+//sending the location
 document.getElementById("sendLocation").addEventListener("click",()=>{
    if(!navigator.geolocation){
       return( alert("geolcation is not supported by your browser") );
@@ -44,6 +67,5 @@ document.getElementById("sendLocation").addEventListener("click",()=>{
         $locationButton.removeAttribute('disabled');
     });
    });
-   
-})
+});
 
