@@ -31,7 +31,7 @@ io.on("connection",(socket)=>{
         if(fil.isProfane(message)){
             return cb("Profanity not allowed!");
         }
-        io.emit("newMessage",message);
+        io.emit("newMessage",generateMessage(message));
         cb("delivered");   
     });
     

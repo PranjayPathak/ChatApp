@@ -15,8 +15,9 @@ const locationTemplate = document.querySelector("#locationTemplate").innerHTML; 
 
 socket.on("newMessage",(message)=>{
     // rendering html template for the message   
+    console.log(message.text);
     const html = Mustache.render(messageTemplate,{
-        message: message.text,
+       message: message.text,
        createdAt: moment(message.createdAt).format('h:m a')
     });
    
