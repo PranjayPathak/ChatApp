@@ -32,7 +32,7 @@
      <script id = "messageTemplate" type="text/html">
       <div class="message">
           <p>
-            <span class="message_name">user name</span>
+            <span class="message_name">{{username}}</span>
             <span class="message_meta">{{createdAt}}</span>
           </p>
             <p>{{message}}</p>
@@ -42,7 +42,7 @@
     <script id = "locationTemplate" type="text/html">
         <div>
             <p>
-                <span class="message_name">user name</span>
+                <span class="message_name">{{username}}</span>
                 <span class="message_meta">{{createdAt}}</span>
             </p>
             <a href="{{url}}" target="_blank">my current location</a>

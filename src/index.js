@@ -43,7 +43,7 @@ io.on("connection",(socket)=>{
         if(fil.isProfane(message)){
             return cb("Profanity not allowed!");
         }
-        io.to(user.room).emit("newMessage",generateMessage(message));
+        io.to(user.room).emit("newMessage",generateMessage(user.username,message));
         cb("delivered");   
     });
     
@@ -57,7 +57,7 @@ io.on("connection",(socket)=>{
 
     socket.on("sendLocation",(pos,cb)=>{
         const user = getUser(socket.id);
-        io.to(user.room).emit("locationMessage",generateLocation(`https://www.google.com/maps?q=${pos.lat},${pos.long}`));
+        io.to(user.room).emit("locationMessage",generateLocation(user.username,`https://www.google.com/maps?q=${pos.lat},${pos.long}`));
         cb("location shared");
     });
 

@@ -8,7 +8,7 @@ const $messageFormButton = $messageForm.querySelector("button");
 const $locationButton = document.querySelector("#sendLocation");
 const $messages =  document.querySelector("#messages")
 
-// Templates
+// Templates 
 const messageTemplate = document.querySelector("#messageTemplate").innerHTML; //inner HTML of the tempate
 const locationTemplate = document.querySelector("#locationTemplate").innerHTML; //inner HTML of the location tempate
 
@@ -19,6 +19,7 @@ socket.on("newMessage",(message)=>{
     // rendering html template for the message   
     console.log(message.text);
     const html = Mustache.render(messageTemplate,{
+       username: message.username, 
        message: message.text,
        createdAt: moment(message.createdAt).format('h:m a')
     });
@@ -27,10 +28,11 @@ socket.on("newMessage",(message)=>{
     $messages.insertAdjacentHTML("beforeend",html)
 });
 
-socket.on("locationMessage",(location)=>{
+socket.on("locationMessage",(message)=>{
     // rendering html template for the message   
     const html = Mustache.render(locationTemplate,{
-       url: location.url,
+        username: message.username,
+        url: message.url,
        createdAt: moment(location.createdAt).format('h:m a')
     });
    
