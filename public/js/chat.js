@@ -12,6 +12,8 @@ const $messages =  document.querySelector("#messages")
 const messageTemplate = document.querySelector("#messageTemplate").innerHTML; //inner HTML of the tempate
 const locationTemplate = document.querySelector("#locationTemplate").innerHTML; //inner HTML of the location tempate
 
+// Options(Query String)
+const {username,room} = Qs.parse(location.search,{ignoreQueryPrefix: true});
 
 socket.on("newMessage",(message)=>{
     // rendering html template for the message   
@@ -70,3 +72,4 @@ document.getElementById("sendLocation").addEventListener("click",()=>{
    });
 });
 
+socket.emit('join',{username,room});

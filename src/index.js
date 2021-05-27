@@ -21,9 +21,16 @@ const port = process.env.PORT || 3000;
 
 app.use(express.static(publicDirectoryPath));
 
+
 io.on("connection",(socket)=>{
-    socket.emit("newMessage",generateMessage("Welcome!"));
-    socket.broadcast.emit("newMessage",generateMessage("new user has joined"));
+   
+    socket.on('join', ({username,room})=>{
+       socket.join(room);
+
+       socket.to(room).emit("newMessage",generateMessage("Welcome!"));
+       socket.broadcast.to(room).emit("newMessage",generateMessage(`${username} has joined`));
+       
+    });
 
     socket.on("sendMessage",(message, cb)=>{
         const fil = new filter();
