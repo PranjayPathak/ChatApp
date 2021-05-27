@@ -10,7 +10,7 @@ const http = require("http");
 const socketio = require("socket.io");
 const filter = require("bad-words");
 const {generateMessage, generateLocation} = require("./utils/messages.js")
-
+const { addUser, removeUser, getUser, getUsersInRoom} = require("./utils/users.js");
 const app = express();
 
 const server = http.createServer(app); //usually express configures the server
@@ -24,30 +24,40 @@ app.use(express.static(publicDirectoryPath));
 
 io.on("connection",(socket)=>{
    
-    socket.on('join', ({username,room})=>{
-       socket.join(room);
-
-       socket.to(room).emit("newMessage",generateMessage("Welcome!"));
-       socket.broadcast.to(room).emit("newMessage",generateMessage(`${username} has joined`));
+    socket.on('join', (options, cb)=>{
+       const {error , user} = addUser({id:socket.id , ...options})
        
+       if(error){
+           return cb(error);
+       }
+       socket.join(user.room);
+       socket.to(user.room).emit("newMessage",generateMessage("Welcome!"));
+       socket.broadcast.to(user.room).emit("newMessage",generateMessage(`${user.username} has joined`));
+       cb();
     });
 
     socket.on("sendMessage",(message, cb)=>{
+        const user = getUser(socket.id);
         const fil = new filter();
          
         if(fil.isProfane(message)){
             return cb("Profanity not allowed!");
         }
-        io.emit("newMessage",generateMessage(message));
+        io.to(user.room).emit("newMessage",generateMessage(message));
         cb("delivered");   
     });
     
     socket.on("disconnect",()=>{
-        io.emit("newMessage",generateMessage("a user has left"));
+        const user = removeUser(socket.id);
+        if(user){
+            io.to(user.room).emit("newMessage",generateMessage(`${user.username} has left`));
+        }
+        
     });
 
     socket.on("sendLocation",(pos,cb)=>{
-        io.emit("locationMessage",generateLocation(`https://www.google.com/maps?q=${pos.lat},${pos.long}`));
+        const user = getUser(socket.id);
+        io.to(user.room).emit("locationMessage",generateLocation(`https://www.google.com/maps?q=${pos.lat},${pos.long}`));
         cb("location shared");
     });
 
