@@ -31,8 +31,12 @@ io.on("connection",(socket)=>{
            return cb(error);
        }
        socket.join(user.room);
-       socket.to(user.room).emit("newMessage",generateMessage("Welcome!"));
+       socket.emit("newMessage",generateMessage("Welcome!"));
        socket.broadcast.to(user.room).emit("newMessage",generateMessage(`${user.username} has joined`));
+       io.to(user.room).emit("roomData",{
+           room : user.room,
+           users : getUsersInRoom(user.room)
+       })
        cb();
     });
 
@@ -51,8 +55,11 @@ io.on("connection",(socket)=>{
         const user = removeUser(socket.id);
         if(user){
             io.to(user.room).emit("newMessage",generateMessage(`${user.username} has left`));
+            io.to(user.room).emit("roomData",{
+                room : user.room,
+                users : getUsersInRoom(user.room)
+            });
         }
-        
     });
 
     socket.on("sendLocation",(pos,cb)=>{

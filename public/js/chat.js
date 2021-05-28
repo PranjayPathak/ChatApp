@@ -11,13 +11,13 @@ const $messages =  document.querySelector("#messages")
 // Templates 
 const messageTemplate = document.querySelector("#messageTemplate").innerHTML; //inner HTML of the tempate
 const locationTemplate = document.querySelector("#locationTemplate").innerHTML; //inner HTML of the location tempate
+const sidebarTemplate = document.querySelector("#sidebarTemplate").innerHTML;
 
 // Options(Query String)
 const {username,room} = Qs.parse(location.search,{ignoreQueryPrefix: true});
 
 socket.on("newMessage",(message)=>{
     // rendering html template for the message   
-    console.log(message.text);
     const html = Mustache.render(messageTemplate,{
        username: message.username, 
        message: message.text,
@@ -48,13 +48,22 @@ document.getElementById("messageForm").addEventListener("submit",(event)=>{
     const message = event.target.elements.message.value;
     socket.emit("sendMessage",message,(res,err)=>{
         if(err){
-            console.log(err);
+            console.error(err);
         }
         $messageFormButton.removeAttribute("disabled");
         $messageFormInput.value = "";
         $messageFormInput.focus();
         console.log(`status: ${res}`);
     });
+});
+
+socket.on("roomData",({room,users})=>{
+const html = Mustache.render(sidebarTemplate,{
+    room,
+    users
+});
+
+document.querySelector("#sidebar").innerHTML = html;
 });
 
 //sending the location
